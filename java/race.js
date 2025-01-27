@@ -1,4 +1,7 @@
 const lanes = [178, 291, 404, 519];
+let raceOn = true;
+
+//player class
 
 class Player {
   constructor() {
@@ -33,7 +36,9 @@ class Player {
   }
 }
 
-class ObstacleCars {
+//class for car obstacle creation
+
+class ObstacleCar {
   constructor() {
     this.width = 30;
     this.height = 60;
@@ -61,75 +66,126 @@ class ObstacleCars {
     this.positionY--;
     this.obstacleElement.style.bottom = this.positionY + "px";
   }
+
+  gameOver() {
+    this.gameContainer = document.getElementById("game-container");
+    this.gameOverScreen = document.getElementById("gameover-screen");
+    this.gameOverScreen.style.display = "flex";
+    this.obstacleElement.remove();
+  }
 }
 
-class Alphabets {
-  constructor(alphabet) {
+//character class
+
+class Character {
+  constructor(character) {
     this.width = 36;
     this.height = 47;
     this.positionX = lanes[Math.floor(Math.random() * lanes.length)];
     this.positionY = 800;
-    this.currentAlphabet = alphabet;
-    this.alphabetsElementCreation();
+    this.currentCharacter = character;
+    this.characterElementCreation();
   }
 
-  alphabetsElementCreation() {
-    this.alphabetObstacle = document.createElement("div");
-    this.alphabetObstacle.className = "alphabets";
-    this.alphabetObstacle.innerHTML = `<p>${this.currentAlphabet}</p>`;
-    this.alphabetObstacle.style.width = this.width + "px";
-    this.alphabetObstacle.style.height = this.height + "px";
-    this.alphabetObstacle.style.left = this.positionX + "px";
-    this.alphabetObstacle.style.left = this.positionY + "px";
+  characterElementCreation() {
+    this.characterElement = document.createElement("div");
+    this.characterElement.className = "alphabets";
+    this.characterElement.innerHTML = `<p>${this.currentCharacter}</p>`;
+    this.characterElement.style.width = this.width + "px";
+    this.characterElement.style.height = this.height + "px";
+    this.characterElement.style.left = this.positionX + "px";
+    this.characterElement.style.bottom = this.positionY + "px";
     const parentEle = document.getElementById("race-track");
-    parentEle.appendChild(this.alphabetObstacle);
+    parentEle.appendChild(this.characterElement);
   }
   moveDown() {
     this.positionY--;
-    this.alphabetObstacle.style.bottom = this.positionY + "px";
+
+    this.characterElement.style.bottom = this.positionY + "px";
+  }
+
+  hideLetterElement() {
+    this.characterElement.style.display = "none";
   }
 }
 
+//player instance creation
+
 const player = new Player();
-const obstacleArray = [];
-// const alphabetInstance = new Alphabets();
 
+//declaring an empty array for cars
+let obstacleCarsArray = [];
+
+//declaring an empty array for letter
+let charactersArray = [];
+let currentWordIndex = 0;
+let characterHidden = false;
+
+//initializing word array
 const wordsArray = ["APPLE", "CAT", "DOG"];
-const currentWord = wordsArray[Math.floor(Math.random() * wordsArray.length)];
-const alphabetArray = [];
+const currentWord = wordsArray[Math.floor(Math.random() * wordsArray.length)]; //random word picking from the word array
 
-setInterval(() => {
-  const alphabetInstance = new Alphabets(currentWord[0]);
-  alphabetArray.push(alphabetInstance);
+//generate items
+
+const itemCreationInterval = setInterval(() => {
+  const random = Math.round(Math.random() * 10) / 10; //randome number creation
+
+  //condition to generate cars
+  if (random <= 0.8) {
+    const newObstacle = new ObstacleCar();
+    obstacleCarsArray.push(newObstacle);
+  } else {
+    const letterInstance = new Character(currentWord[currentWordIndex]); //condition to generate characters
+    charactersArray.push(letterInstance);
+    characterHidden = false;
+  }
 }, 4000);
 
-setInterval(() => {
-  alphabetArray.forEach((alphabetInstance) => {
-    alphabetInstance.moveDown();
-    console.log(alphabetInstance);
-  });
-}, 20);
+//move down items
 
-setInterval(() => {
-  const newObstacle = new ObstacleCars();
-  obstacleArray.push(newObstacle);
-}, 4000);
-
-setInterval(() => {
-  obstacleArray.forEach((obstacleInstance) => {
-    obstacleInstance.moveDown();
+const itemMovingInterval = setInterval(() => {
+  //looping through cars array and calling move down methond
+  obstacleCarsArray.forEach((carInstance) => {
+    carInstance.moveDown();
     if (
-      player.positionX < obstacleInstance.positionX + obstacleInstance.width &&
-      player.positionX + player.width > obstacleInstance.positionX &&
-      player.positionY < obstacleInstance.positionY + obstacleInstance.height &&
-      player.positionY + player.height > obstacleInstance.positionY
+      player.positionX < carInstance.positionX + carInstance.width &&
+      player.positionX + player.width > carInstance.positionX &&
+      player.positionY < carInstance.positionY + carInstance.height &&
+      player.positionY + player.height > carInstance.positionY
     ) {
-      // Collision detected!
-      console.log("game over...");
-      //   location.href = "gameover.html";
+      raceOn = false;
+      carInstance.gameOver();
+      const boardElement = document.getElementById("board");
+      boardElement.style.animation = "none";
+      clearInterval(itemCreationInterval);
     }
   });
-}, 20);
+
+  //looping through charcaters array and calling move down methond
+
+  charactersArray.forEach((characterInstance) => {
+    characterInstance.moveDown();
+    if (
+      player.positionX <
+        characterInstance.positionX + characterInstance.width &&
+      player.positionX + player.width > characterInstance.positionX &&
+      player.positionY <
+        characterInstance.positionY + characterInstance.height &&
+      player.positionY + player.height > characterInstance.positionY
+    ) {
+      if (!characterHidden) {
+        currentWordIndex++;
+        if (currentWordIndex === currentWord.length) {
+          alert("success");
+        }
+        characterHidden = true;
+      }
+      characterInstance.hideLetterElement();
+    }
+  });
+});
+
+//key press event for player
 
 document.addEventListener("keydown", (e) => {
   if (e.code === "ArrowLeft") {
@@ -139,3 +195,19 @@ document.addEventListener("keydown", (e) => {
     player.moveRight();
   }
 });
+
+const restartBtnElement = document.getElementById("restart-button");
+restartBtnElement.addEventListener("click", () => {
+  location.reload();
+});
+
+const quitBtnElement = document.getElementById("quit");
+quitBtnElement.addEventListener("click", () => {
+  window.close();
+});
+
+//updating UI to display the current word
+
+const wordDisplayEle = document.getElementById("word-display-container");
+wordDisplayEle.innerHTML = `<h2>Pick the letters of word : </h2>
+<p>${currentWord}</p>`;
