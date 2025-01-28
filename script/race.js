@@ -34,6 +34,18 @@ class Player {
       this.playerElement.style.left = this.positionX + "px";
     }
   }
+
+  gameOver() {
+    this.gameContainer = document.getElementById("game-container");
+    this.gameOverScreen = document.getElementById("gameover-screen");
+    this.gameOverScreen.style.display = "flex";
+  }
+
+  gameWinner() {
+    this.successContainer = document.getElementById("success-container");
+    this.successScreen = document.getElementById("success-screen");
+    this.successScreen.style.display = "flex";
+  }
 }
 
 //class for car obstacle creation
@@ -43,7 +55,7 @@ class ObstacleCar {
     this.width = 30;
     this.height = 60;
     this.positionX = lanes[Math.floor(Math.random() * lanes.length)];
-    this.positionY = 800;
+    this.positionY = 950;
     this.obstacleElementCreation();
   }
 
@@ -66,13 +78,6 @@ class ObstacleCar {
     this.positionY--;
     this.obstacleElement.style.bottom = this.positionY + "px";
   }
-
-  gameOver() {
-    this.gameContainer = document.getElementById("game-container");
-    this.gameOverScreen = document.getElementById("gameover-screen");
-    this.gameOverScreen.style.display = "flex";
-    this.obstacleElement.remove();
-  }
 }
 
 //character class
@@ -82,7 +87,7 @@ class Character {
     this.width = 36;
     this.height = 47;
     this.positionX = lanes[Math.floor(Math.random() * lanes.length)];
-    this.positionY = 800;
+    this.positionY = 950;
     this.currentCharacter = character;
     this.isActive = true; //using this we tell forEach to stop moveDown() the current instance character
     this.characterElementCreation();
@@ -124,16 +129,17 @@ let isActive = false;
 
 //initializing word array
 const wordsArray = [
-  "APPLE",
-  "WATER",
-  "CHAIR",
-  "LIGHT",
-  "CLOUD",
-  "DANCE",
-  "MOUSE",
-  "FRAME",
-  "ARROW",
-  "HOUSE",
+  // "APPLE",
+  // "WATER",
+  // "CHAIR",
+  // "LIGHT",
+  // "CLOUD",
+  // "DANCE",
+  // "MOUSE",
+  // "FRAME",
+  // "ARROW",
+  // "HOUSE",
+  "A",
 ];
 const currentWord = wordsArray[Math.floor(Math.random() * wordsArray.length)]; //random word picking from the word array
 
@@ -158,6 +164,9 @@ const itemCreationInterval = setInterval(() => {
 const itemMovingInterval = setInterval(() => {
   //looping through cars array and calling move down methond
   obstacleCarsArray.forEach((carInstance) => {
+    if (!raceOn) {
+      return;
+    }
     carInstance.moveDown();
     if (
       player.positionX < carInstance.positionX + carInstance.width &&
@@ -166,9 +175,10 @@ const itemMovingInterval = setInterval(() => {
       player.positionY + player.height > carInstance.positionY
     ) {
       raceOn = false;
-      carInstance.gameOver();
+      player.gameOver();
       const boardElement = document.getElementById("board");
       boardElement.style.animation = "none";
+      carInstance.obstacleElement.remove();
       clearInterval(itemCreationInterval);
     }
   });
@@ -197,10 +207,10 @@ const itemMovingInterval = setInterval(() => {
           raceOn = false;
 
           //TODO: success screen goes here
-          alert("success");
-
+          player.gameWinner();
           const boardElement = document.getElementById("board");
           boardElement.style.animation = "none";
+          characterInstance.characterElement.remove();
           clearInterval(itemCreationInterval);
         }
         isActive = false;
@@ -253,7 +263,17 @@ restartBtnElement.addEventListener("click", () => {
   location.reload();
 });
 
-const quitBtnElement = document.getElementById("quit");
-quitBtnElement.addEventListener("click", () => {
+const quitButtonElement = document.getElementById("quit");
+quitButtonElement.addEventListener("click", () => {
   window.close();
+});
+
+const playAgainButtonElement = document.getElementById("play-again");
+playAgainButtonElement.addEventListener("click", () => {
+  location.reload();
+});
+
+const homeButtonElement = document.getElementById("home");
+homeButtonElement.addEventListener("click", () => {
+  window.location.href = "/index.html";
 });

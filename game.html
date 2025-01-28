@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Race Car 2D Game</title>
+    <link rel="stylesheet" href="./css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Atma:wght@300;400;500;600;700&family=Shadows+Into+Light&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="board">
+      <div id="race-track">
+        <img id="player" src="./assets/images/player-car.png" alt="player" />
+      </div>
+    </div>
+    <div id="game-container">
+      <div id="gameover-screen">
+        <div>
+          <button id="restart-button">
+            <i class="fa fa-refresh fa-spin"></i> Play Again
+          </button>
+          <button id="quit">
+            <i class="fa fa-times"></i>
+            Quit
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="word-display-container">
+      <h2>Pick the letters of word :</h2>
+    </div>
+
+    <div id="success-container">
+      <div id="success-screen">
+        <div>
+          <h1>Winner🎉!!</h1>
+          <button id="play-again">
+            <i class="fa fa-refresh fa-spin"></i> Play Again
+          </button>
+          <button id="home"><i class="fa fa-home"></i> Home</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./script/race.js"></script>
+  </body>
+</html>
