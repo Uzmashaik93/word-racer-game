@@ -119,7 +119,7 @@ let obstacleCarsArray = [];
 //declaring an empty array for letter
 let charactersArray = [];
 let currentWordIndex = 0;
-let characterHidden = false;
+let isActive = true;
 
 //initializing word array
 const wordsArray = ["APPLE", "CAT", "DOG"];
@@ -134,9 +134,11 @@ const itemCreationInterval = setInterval(() => {
     const newObstacle = new ObstacleCar();
     obstacleCarsArray.push(newObstacle);
   } else {
-    const letterInstance = new Character(currentWord[currentWordIndex]); //generate characters
-    charactersArray.push(letterInstance);
-    characterHidden = false;
+    if (isActive) {
+      const letterInstance = new Character(currentWord[currentWordIndex]); //generate characters
+      charactersArray.push(letterInstance);
+      isActive = false;
+    }
   }
 }, 2000);
 
@@ -170,12 +172,12 @@ const itemMovingInterval = setInterval(() => {
         characterInstance.positionY + characterInstance.height &&
       player.positionY + player.height > characterInstance.positionY
     ) {
-      if (!characterHidden) {
+      if (!isActive) {
         currentWordIndex++;
         if (currentWordIndex === currentWord.length) {
           alert("success");
         }
-        characterHidden = true;
+        isActive = true;
       }
       characterInstance.hideLetterElement(); //hides the characters
       currentWord[currentWordIndex];
