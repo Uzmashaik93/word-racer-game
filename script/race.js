@@ -84,12 +84,13 @@ class Character {
     this.positionX = lanes[Math.floor(Math.random() * lanes.length)];
     this.positionY = 800;
     this.currentCharacter = character;
+    this.isActive = true; //using this we tell forEach to stop moveDown() the current instance character
     this.characterElementCreation();
   }
 
   characterElementCreation() {
     this.characterElement = document.createElement("div");
-    this.characterElement.className = "alphabets";
+    this.characterElement.className = "alphabets glow";
     this.characterElement.innerHTML = `<p>${this.currentCharacter}</p>`;
     this.characterElement.style.width = this.width + "px";
     this.characterElement.style.height = this.height + "px";
@@ -119,10 +120,21 @@ let obstacleCarsArray = [];
 //declaring an empty array for letter
 let charactersArray = [];
 let currentWordIndex = 0;
-let isActive = true;
+let isActive = false;
 
 //initializing word array
-const wordsArray = ["APPLE", "CAT", "DOG"];
+const wordsArray = [
+  "APPLE",
+  "WATER",
+  "CHAIR",
+  "LIGHT",
+  "CLOUD",
+  "DANCE",
+  "MOUSE",
+  "FRAME",
+  "ARROW",
+  "HOUSE",
+];
 const currentWord = wordsArray[Math.floor(Math.random() * wordsArray.length)]; //random word picking from the word array
 
 //generate items
@@ -130,14 +142,14 @@ const itemCreationInterval = setInterval(() => {
   const random = Math.round(Math.random() * 10) / 10; //randome number creation
 
   //condition to generate cars
-  if (random <= 0.5) {
+  if (random <= 0.4) {
     const newObstacle = new ObstacleCar();
     obstacleCarsArray.push(newObstacle);
   } else {
-    if (isActive) {
+    if (!isActive) {
       const letterInstance = new Character(currentWord[currentWordIndex]); //generate characters
       charactersArray.push(letterInstance);
-      isActive = false;
+      isActive = true;
     }
   }
 }, 2000);
@@ -162,7 +174,14 @@ const itemMovingInterval = setInterval(() => {
   });
 
   //looping through characters array and calling move down methond
+
   charactersArray.forEach((characterInstance) => {
+    //to hide the character which got missed by the player
+
+    if (!characterInstance.isActive) {
+      characterInstance.hideLetterElement();
+      return;
+    }
     characterInstance.moveDown();
     if (
       player.positionX <
@@ -172,15 +191,22 @@ const itemMovingInterval = setInterval(() => {
         characterInstance.positionY + characterInstance.height &&
       player.positionY + player.height > characterInstance.positionY
     ) {
-      if (!isActive) {
+      if (isActive) {
         currentWordIndex++;
         if (currentWordIndex === currentWord.length) {
+          raceOn = false;
+
+          //TODO: success screen goes here
           alert("success");
+
+          const boardElement = document.getElementById("board");
+          boardElement.style.animation = "none";
+          clearInterval(itemCreationInterval);
         }
-        isActive = true;
+        isActive = false;
       }
-      characterInstance.hideLetterElement(); //hides the characters
-      currentWord[currentWordIndex];
+
+      characterInstance.hideLetterElement(); //hides the character
 
       const formattedWord = `
           <span class="highlighted">${currentWord.substring(
@@ -195,6 +221,12 @@ const itemMovingInterval = setInterval(() => {
         <h2>Pick all the letters of the word : </h2>
         <p>${formattedWord}</p>
       `;
+    } else {
+      // this code will reset the flag to start creating the next character when player misses it
+      if (characterInstance.positionY < 0) {
+        isActive = false;
+        characterInstance.isActive = false;
+      }
     }
   });
 }, 1);
