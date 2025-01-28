@@ -50,10 +50,26 @@ body {
 }
 
 .alphabets p {
-  color: chocolate;
+  color: white;
   font-size: 50px;
   margin: 0;
   padding: 0;
+}
+
+.glow {
+  color: #fff;
+  text-align: center;
+  animation: glow 1s ease-in-out infinite alternate;
+}
+
+@-webkit-keyframes glow {
+  from {
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #e68e00, 0 0 30px #e68e00;
+  }
+
+  to {
+    text-shadow: 0 0 10px #fff, 0 0 20px #e68e00, 0 0 30px #e68e00;
+  }
 }
 
 #word-display-container {
@@ -76,7 +92,7 @@ body {
 }
 
 .highlighted {
-  color: green;
+  color: red;
 }
 
 #gameover-screen {
