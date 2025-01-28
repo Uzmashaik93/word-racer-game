@@ -126,23 +126,21 @@ const wordsArray = ["APPLE", "CAT", "DOG"];
 const currentWord = wordsArray[Math.floor(Math.random() * wordsArray.length)]; //random word picking from the word array
 
 //generate items
-
 const itemCreationInterval = setInterval(() => {
   const random = Math.round(Math.random() * 10) / 10; //randome number creation
 
   //condition to generate cars
-  if (random <= 0.8) {
+  if (random <= 0.5) {
     const newObstacle = new ObstacleCar();
     obstacleCarsArray.push(newObstacle);
   } else {
-    const letterInstance = new Character(currentWord[currentWordIndex]); //condition to generate characters
+    const letterInstance = new Character(currentWord[currentWordIndex]); //generate characters
     charactersArray.push(letterInstance);
     characterHidden = false;
   }
-}, 4000);
+}, 2000);
 
 //move down items
-
 const itemMovingInterval = setInterval(() => {
   //looping through cars array and calling move down methond
   obstacleCarsArray.forEach((carInstance) => {
@@ -161,8 +159,7 @@ const itemMovingInterval = setInterval(() => {
     }
   });
 
-  //looping through charcaters array and calling move down methond
-
+  //looping through characters array and calling move down methond
   charactersArray.forEach((characterInstance) => {
     characterInstance.moveDown();
     if (
@@ -180,10 +177,31 @@ const itemMovingInterval = setInterval(() => {
         }
         characterHidden = true;
       }
-      characterInstance.hideLetterElement();
+      characterInstance.hideLetterElement(); //hides the characters
+      currentWord[currentWordIndex];
+
+      const formattedWord = `
+          <span class="highlighted">${currentWord.substring(
+            0,
+            currentWordIndex
+          )}
+          </span>
+          ${currentWord.substring(currentWordIndex)}
+        `;
+
+      wordDisplayEle.innerHTML = `
+        <h2>Pick all the letters of the word : </h2>
+        <p>${formattedWord}</p>
+      `;
     }
   });
-});
+}, 1);
+
+//updating UI to display the current word
+const textToDisplay = `<h2>Pick all the letters of the word : </h2>
+<p>${currentWord}</p>`;
+const wordDisplayEle = document.getElementById("word-display-container");
+wordDisplayEle.innerHTML = textToDisplay;
 
 //key press event for player
 
@@ -205,9 +223,3 @@ const quitBtnElement = document.getElementById("quit");
 quitBtnElement.addEventListener("click", () => {
   window.close();
 });
-
-//updating UI to display the current word
-
-const wordDisplayEle = document.getElementById("word-display-container");
-wordDisplayEle.innerHTML = `<h2>Pick the letters of word : </h2>
-<p>${currentWord}</p>`;

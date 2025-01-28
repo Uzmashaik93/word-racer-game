@@ -61,7 +61,7 @@ body {
   height: auto;
   position: absolute;
   top: 20%;
-  right: 10%;
+  right: 100px;
 }
 
 #word-display-container h2 {
@@ -73,6 +73,10 @@ body {
   text-align: center;
   font-size: 3rem;
   font-weight: 600;
+}
+
+.highlighted {
+  color: green;
 }
 
 #gameover-screen {
