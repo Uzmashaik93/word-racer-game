@@ -129,17 +129,16 @@ let isActive = false;
 
 //initializing word array
 const wordsArray = [
-  // "APPLE",
-  // "WATER",
-  // "CHAIR",
-  // "LIGHT",
-  // "CLOUD",
-  // "DANCE",
-  // "MOUSE",
-  // "FRAME",
-  // "ARROW",
-  // "HOUSE",
-  "A",
+  "APPLE",
+  "WATER",
+  "CHAIR",
+  "LIGHT",
+  "CLOUD",
+  "DANCE",
+  "MOUSE",
+  "FRAME",
+  "ARROW",
+  "HOUSE",
 ];
 const currentWord = wordsArray[Math.floor(Math.random() * wordsArray.length)]; //random word picking from the word array
 
@@ -148,7 +147,7 @@ const itemCreationInterval = setInterval(() => {
   const random = Math.round(Math.random() * 10) / 10; //randome number creation
 
   //condition to generate cars
-  if (random <= 0.4) {
+  if (random <= 0.8) {
     const newObstacle = new ObstacleCar();
     obstacleCarsArray.push(newObstacle);
   } else {
