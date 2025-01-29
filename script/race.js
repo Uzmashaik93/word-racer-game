@@ -63,7 +63,7 @@ class ObstacleCar {
     this.obstacleElement = document.createElement("img");
     this.obstacleElement.setAttribute(
       "src",
-      "../assets/images/obstacle-cars.png"
+      "./assets/images/obstacle-cars.png"
     );
     this.obstacleElement.className = "obstacle";
     this.obstacleElement.style.width = this.width + "px";
