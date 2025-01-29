@@ -274,5 +274,5 @@ playAgainButtonElement.addEventListener("click", () => {
 
 const homeButtonElement = document.getElementById("home");
 homeButtonElement.addEventListener("click", () => {
-  window.location.href = "/index.html";
+  window.location.href = "./index.html";
 });
