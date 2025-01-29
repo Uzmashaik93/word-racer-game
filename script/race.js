@@ -9,10 +9,13 @@ class Player {
     this.height = 60;
     this.positionX = lanes[Math.floor(Math.random() * lanes.length)];
     this.positionY = 10;
+    this.sound = new Audio("./assets/images/sounds/bonus-sound.mp3"); // Preload sound once
+    this.carSound = new Audio("./assets/images/sounds/engine-sound.mp3");
 
     this.playerElement = document.getElementById("player");
 
     this.updateUi();
+    this.carSound.play();
   }
 
   updateUi() {
@@ -39,12 +42,17 @@ class Player {
     this.gameContainer = document.getElementById("game-container");
     this.gameOverScreen = document.getElementById("gameover-screen");
     this.gameOverScreen.style.display = "flex";
+    this.sound.pause();
   }
 
   gameWinner() {
     this.successContainer = document.getElementById("success-container");
     this.successScreen = document.getElementById("success-screen");
     this.successScreen.style.display = "flex";
+  }
+
+  playSound() {
+    this.sound.play(); // Play sound when needed
   }
 }
 
@@ -78,6 +86,11 @@ class ObstacleCar {
     this.positionY--;
     this.obstacleElement.style.bottom = this.positionY + "px";
   }
+
+  removeObstacle() {
+    this.obstacleElement.remove();
+    obstacleCarsArray = obstacleCarsArray.filter((car) => car !== this); // Remove from array
+  }
 }
 
 //character class
@@ -106,8 +119,15 @@ class Character {
   }
   moveDown() {
     this.positionY--;
-
     this.characterElement.style.bottom = this.positionY + "px";
+
+    if (this.positionY < 0) {
+      this.removeCharacter();
+    }
+  }
+  removeCharacter() {
+    this.characterElement.remove();
+    charactersArray = charactersArray.filter((char) => char !== this); // Remove from array
   }
 
   hideLetterElement() {
@@ -144,9 +164,8 @@ const currentWord = wordsArray[Math.floor(Math.random() * wordsArray.length)]; /
 
 //generate items
 const itemCreationInterval = setInterval(() => {
-  const random = Math.round(Math.random() * 10) / 10; //randome number creation
+  const random = Math.round(Math.random() * 10) / 10;
 
-  //condition to generate cars
   if (random <= 0.8) {
     const newObstacle = new ObstacleCar();
     obstacleCarsArray.push(newObstacle);
@@ -157,92 +176,98 @@ const itemCreationInterval = setInterval(() => {
       isActive = true;
     }
   }
+
+  // Remove items off-screen
+  charactersArray.forEach((characterInstance) => {
+    if (characterInstance.positionY < 0) {
+      characterInstance.removeCharacter();
+    }
+  });
+
+  obstacleCarsArray.forEach((carInstance) => {
+    if (carInstance.positionY < 0) {
+      carInstance.removeObstacle();
+    }
+  });
 }, 2000);
 
-//move down items
+//collision detection function
+
+function checkCollision(obj1, obj2) {
+  return (
+    obj1.positionX < obj2.positionX + obj2.width &&
+    obj1.positionX + obj1.width > obj2.positionX &&
+    obj1.positionY < obj2.positionY + obj2.height &&
+    obj1.positionY + obj1.height > obj2.positionY
+  );
+}
+
 const itemMovingInterval = setInterval(() => {
-  //looping through cars array and calling move down methond
+  if (!raceOn) return;
+
+  // Move obstacle cars
   obstacleCarsArray.forEach((carInstance) => {
-    if (!raceOn) {
-      return;
-    }
     carInstance.moveDown();
-    if (
-      player.positionX < carInstance.positionX + carInstance.width &&
-      player.positionX + player.width > carInstance.positionX &&
-      player.positionY < carInstance.positionY + carInstance.height &&
-      player.positionY + player.height > carInstance.positionY
-    ) {
+    if (checkCollision(player, carInstance)) {
       raceOn = false;
       player.gameOver();
-      const boardElement = document.getElementById("board");
-      boardElement.style.animation = "none";
+      document.getElementById("board").style.animation = "none";
       carInstance.obstacleElement.remove();
       clearInterval(itemCreationInterval);
     }
   });
 
-  //looping through characters array and calling move down methond
-
+  // Move letters
   charactersArray.forEach((characterInstance) => {
-    //to hide the character which got missed by the player
-
     if (!characterInstance.isActive) {
       characterInstance.hideLetterElement();
       return;
     }
+
     characterInstance.moveDown();
-    if (
-      player.positionX <
-        characterInstance.positionX + characterInstance.width &&
-      player.positionX + player.width > characterInstance.positionX &&
-      player.positionY <
-        characterInstance.positionY + characterInstance.height &&
-      player.positionY + player.height > characterInstance.positionY
-    ) {
+
+    if (checkCollision(player, characterInstance)) {
       if (isActive) {
         currentWordIndex++;
+        player.playSound();
+
         if (currentWordIndex === currentWord.length) {
           raceOn = false;
-
-          //TODO: success screen goes here
           player.gameWinner();
-          const boardElement = document.getElementById("board");
-          boardElement.style.animation = "none";
+          document.getElementById("board").style.animation = "none";
           characterInstance.characterElement.remove();
           clearInterval(itemCreationInterval);
         }
+
         isActive = false;
       }
 
-      characterInstance.hideLetterElement(); //hides the character
+      characterInstance.hideLetterElement();
 
-      const formattedWord = `
+      wordDisplayEle.innerHTML = `
+        <h2>Pick all the letters of the word:</h2>
+        <p>
           <span class="highlighted glow">${currentWord.substring(
             0,
             currentWordIndex
-          )}
-          </span>
+          )}</span>
           ${currentWord.substring(currentWordIndex)}
-        `;
-
-      wordDisplayEle.innerHTML = `
-        <h2>Pick all the letters of the word : </h2>
-        <p>${formattedWord}</p>
+        </p>
       `;
-    } else {
-      // this code will reset the flag to start creating the next character when player misses it
-      if (characterInstance.positionY < 0) {
-        isActive = false;
-        characterInstance.isActive = false;
-      }
+    } else if (characterInstance.positionY < 0) {
+      // Reset flag if the player misses the letter
+      isActive = characterInstance.isActive = false;
     }
   });
-}, 1);
+}, 1); // Adjusted interval for better performance (~60fps)
 
 //updating UI to display the current word
-const textToDisplay = `<h2>Pick all the letters of the word : </h2>
-<p>${currentWord}</p>`;
+const textToDisplay = `
+  <h2>Pick all the letters</h2>
+  <h2>of the word:</h2>
+  <p>${currentWord}</p>
+`;
+
 const wordDisplayEle = document.getElementById("word-display-container");
 wordDisplayEle.innerHTML = textToDisplay;
 
@@ -258,18 +283,12 @@ document.addEventListener("keydown", (e) => {
 });
 
 const restartBtnElement = document.getElementById("restart-button");
-restartBtnElement.addEventListener("click", () => {
-  location.reload();
-});
-
-const quitButtonElement = document.getElementById("quit");
-quitButtonElement.addEventListener("click", () => {
-  window.close();
-});
-
 const playAgainButtonElement = document.getElementById("play-again");
-playAgainButtonElement.addEventListener("click", () => {
-  location.reload();
+const restartButtons = [restartBtnElement, playAgainButtonElement];
+restartButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    location.reload();
+  });
 });
 
 const homeButtonElement = document.getElementById("home");
