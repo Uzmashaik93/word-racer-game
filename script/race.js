@@ -218,7 +218,7 @@ const itemMovingInterval = setInterval(() => {
       characterInstance.hideLetterElement(); //hides the character
 
       const formattedWord = `
-          <span class="highlighted">${currentWord.substring(
+          <span class="highlighted glow">${currentWord.substring(
             0,
             currentWordIndex
           )}
