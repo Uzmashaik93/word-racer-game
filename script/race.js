@@ -58,7 +58,6 @@ class Player {
       this.currentTime = 0;
       this.play();
     });
-    this.raceSound.play();
   }
 
   pauseRaceSound() {
@@ -271,7 +270,8 @@ const itemMovingInterval = setInterval(() => {
       characterInstance.hideLetterElement();
 
       wordDisplayEle.innerHTML = `
-        <h2>Pick all the letters of the word:</h2>
+        <h2>Pick all the letters</h2>
+        <h2>of the word:</h2>
         <p>
           <span class="highlighted glow">${currentWord.substring(
             0,

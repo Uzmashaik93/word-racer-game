@@ -67,7 +67,7 @@ body {
 #word-display-container {
   position: absolute;
   top: 20%;
-  right: 10%;
+  right: 8%;
   width: auto;
   height: auto;
   display: flex;
@@ -90,6 +90,7 @@ body {
 
 .highlighted {
   color: rgb(210, 181, 129);
+  
 }
 
 /* Game-over and Success Screens */
