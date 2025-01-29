@@ -1,4 +1,4 @@
-# Word Racer Game
+# Word Racer Game 🏁
 
 Word Racer is an exciting racing and typing game where players dodge traffic while collecting letters to form words. The game combines the thrill of avoiding obstacles with the fun of typing, challenging players to type quickly and avoid getting hit by cars on the road.
 
