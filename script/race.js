@@ -9,13 +9,15 @@ class Player {
     this.height = 60;
     this.positionX = lanes[Math.floor(Math.random() * lanes.length)];
     this.positionY = 10;
-    this.sound = new Audio("./assets/images/sounds/bonus-sound.mp3"); // Preload sound once
-    this.carSound = new Audio("./assets/images/sounds/engine-sound.mp3");
+    this.bonusSound = new Audio("./assets/sounds/bonus-sound.mp3"); // Preload sound once
+    this.gameOverSound = new Audio("./assets/sounds/car-crash.mp3");
+    this.raceSound = new Audio("./assets/sounds/car-sound-effect-126709.mp3");
+    this.winnerSound = new Audio("./assets/sounds/winner-sound.wav");
 
     this.playerElement = document.getElementById("player");
 
     this.updateUi();
-    this.carSound.play();
+    this.playRaceSound();
   }
 
   updateUi() {
@@ -27,13 +29,13 @@ class Player {
 
   moveRight() {
     if (this.positionX <= lanes[lanes.length - 1]) {
-      this.positionX = this.positionX + 5;
+      this.positionX = this.positionX + 20;
       this.playerElement.style.left = this.positionX + "px";
     }
   }
   moveLeft() {
     if (this.positionX >= lanes[0]) {
-      this.positionX = this.positionX - 5;
+      this.positionX = this.positionX - 20;
       this.playerElement.style.left = this.positionX + "px";
     }
   }
@@ -42,7 +44,7 @@ class Player {
     this.gameContainer = document.getElementById("game-container");
     this.gameOverScreen = document.getElementById("gameover-screen");
     this.gameOverScreen.style.display = "flex";
-    this.sound.pause();
+    this.bonusSound.pause();
   }
 
   gameWinner() {
@@ -51,8 +53,28 @@ class Player {
     this.successScreen.style.display = "flex";
   }
 
-  playSound() {
-    this.sound.play(); // Play sound when needed
+  playRaceSound() {
+    this.raceSound.addEventListener("ended", function () {
+      this.currentTime = 0;
+      this.play();
+    });
+    this.raceSound.play();
+  }
+
+  pauseRaceSound() {
+    this.raceSound.pause();
+  }
+
+  playBonusSound() {
+    this.bonusSound.play(); // Play sound when needed
+  }
+
+  playGameOverSound() {
+    this.gameOverSound.play();
+  }
+
+  playWinnerSound() {
+    this.winnerSound.play();
   }
 }
 
@@ -210,6 +232,8 @@ const itemMovingInterval = setInterval(() => {
     carInstance.moveDown();
     if (checkCollision(player, carInstance)) {
       raceOn = false;
+      player.playGameOverSound();
+      player.pauseRaceSound();
       player.gameOver();
       document.getElementById("board").style.animation = "none";
       carInstance.obstacleElement.remove();
@@ -229,10 +253,12 @@ const itemMovingInterval = setInterval(() => {
     if (checkCollision(player, characterInstance)) {
       if (isActive) {
         currentWordIndex++;
-        player.playSound();
+        player.playBonusSound();
 
         if (currentWordIndex === currentWord.length) {
           raceOn = false;
+          player.playWinnerSound();
+          player.pauseRaceSound();
           player.gameWinner();
           document.getElementById("board").style.animation = "none";
           characterInstance.characterElement.remove();
@@ -259,7 +285,7 @@ const itemMovingInterval = setInterval(() => {
       isActive = characterInstance.isActive = false;
     }
   });
-}, 1); // Adjusted interval for better performance (~60fps)
+}, 10); // Adjusted interval for better performance (~60fps)
 
 //updating UI to display the current word
 const textToDisplay = `
@@ -291,7 +317,12 @@ restartButtons.forEach((button) => {
   });
 });
 
-const homeButtonElement = document.getElementById("home");
-homeButtonElement.addEventListener("click", () => {
-  window.location.href = "./index.html";
+const homeButtonElements = [
+  document.getElementById("home-from-success"),
+  document.getElementById("home-from-failure"),
+];
+homeButtonElements.forEach((button) => {
+  button.addEventListener("click", () => {
+    window.location.href = "./index.html";
+  });
 });

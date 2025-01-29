@@ -17,6 +17,13 @@
     />
   </head>
   <body>
+    <audio
+      id="background-music"
+      src="./assets/sounds/game-music-loop-7-145285.mp3"
+      autoplay
+      loop
+    ></audio>
+
     <div class="details-text">
       <h1>Word Racer</h1>
       <p>The goal is to avoid collisions</p>
@@ -33,5 +40,14 @@
         </div>
       </div>
     </div>
+    <script>
+      window.addEventListener(
+        "click",
+        function () {
+          document.getElementById("background-music").play();
+        },
+        { once: true }
+      ); // Ensures it only triggers once
+    </script>
   </body>
 </html>
