@@ -109,16 +109,30 @@ body {
   box-shadow: rgba(0, 0, 0, .3) 2px 8px 4px -6px;
 }
 
-#play-music{
-  
-  
+.instructions{
+ margin-left: 5%;
+ margin-top:35% ;
+ font-size: 3rem; 
+ display: flex;
+ flex-direction: column;
+ justify-content: space-between;
+ font-weight: 500;
 }
+
+
+.instructions p{
+  font-size: 1.5rem;
+  float: left;
+  margin-right: 20px;
+}
+
+
 
 /* Word display container */
 #word-display-container {
   position: absolute;
   top: 20%;
-  right: 8%;
+  right: 4%;
   width: auto;
   height: auto;
   display: flex;

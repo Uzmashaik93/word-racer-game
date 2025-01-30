@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Word Racer Game</title>
-    <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="./css/game.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
@@ -42,6 +42,15 @@
       </button>
     </div>
 
+    <div class="instructions">
+      <div>
+        <p>Press <i class="fa fa-arrow-left"></i> to go left</p>
+      </div>
+      <div>
+        <p>Press <i class="fa fa-arrow-right"></i> to go right</p>
+      </div>
+    </div>
+
     <div id="success-container">
       <div id="success-screen">
         <div>
@@ -56,6 +65,10 @@
       </div>
     </div>
 
-    <script type="module" src="./script/race.js"></script>
+    <script type="module" src="./script/game.js"></script>
+    <script type="module" src="./script/player.js"></script>
+    <script type="module" src="./script/obstacleCar.js"></script>
+    <script type="module" src="./script/character.js"></script>
+    <script type="module" src="./script/powerUp.js"></script>
   </body>
 </html>
