@@ -13,11 +13,11 @@ class Player {
     this.gameOverSound = new Audio("./assets/sounds/car-crash.mp3");
     this.raceSound = new Audio("./assets/sounds/car-sound-effect-126709.mp3");
     this.winnerSound = new Audio("./assets/sounds/winner-sound.wav");
+    this.powerUpSound = new Audio("./assets/sounds/power-up.mp3");
 
     this.playerElement = document.getElementById("player");
 
     this.updateUi();
-    this.playRaceSound();
   }
 
   updateUi() {
@@ -54,10 +54,12 @@ class Player {
   }
 
   playRaceSound() {
-    this.raceSound.addEventListener("ended", function () {
-      this.currentTime = 0;
-      this.play();
-    });
+    this.raceSound.loop = true;
+    if (this.raceSound.paused) {
+      this.raceSound.play();
+    } else {
+      this.raceSound.pause();
+    }
   }
 
   pauseRaceSound() {
@@ -66,6 +68,10 @@ class Player {
 
   playBonusSound() {
     this.bonusSound.play(); // Play sound when needed
+  }
+
+  playPowerUpSound() {
+    this.powerUpSound.play();
   }
 
   playGameOverSound() {
@@ -156,12 +162,46 @@ class Character {
   }
 }
 
+class PowerUp {
+  constructor() {
+    this.width = 30;
+    this.height = 60;
+    this.positionX = lanes[Math.floor(Math.random() * lanes.length)];
+    this.positionY = 950;
+    this.powerUpElementCreation();
+  }
+
+  powerUpElementCreation() {
+    this.powerUpElement = document.createElement("img");
+    this.powerUpElement.setAttribute("src", "./assets/images/power-up.png");
+    this.powerUpElement.className = "powerUp";
+    this.powerUpElement.style.width = this.width + "px";
+    this.powerUpElement.style.height = this.height + "px";
+    this.powerUpElement.style.left = this.positionX + "px";
+    this.powerUpElement.style.bottom = this.positionY + "px";
+    const parentEle = document.getElementById("race-track");
+    parentEle.appendChild(this.powerUpElement);
+  }
+
+  moveDown() {
+    this.positionY--;
+    this.powerUpElement.style.bottom = this.positionY + "px";
+  }
+
+  removePowerUpElement() {
+    this.powerUpElement.remove();
+    powerUpElement = powerUpElement.filter((car) => car !== this); // Remove from array
+  }
+}
 //player instance creation
 
 const player = new Player();
 
 //declaring an empty array for cars
 let obstacleCarsArray = [];
+
+//declaring an empty array for power ups
+let powerUpArray = [];
 
 //declaring an empty array for letter
 let charactersArray = [];
@@ -187,15 +227,18 @@ const currentWord = wordsArray[Math.floor(Math.random() * wordsArray.length)]; /
 const itemCreationInterval = setInterval(() => {
   const random = Math.round(Math.random() * 10) / 10;
 
-  if (random <= 0.8) {
+  if (random < 0.5) {
     const newObstacle = new ObstacleCar();
     obstacleCarsArray.push(newObstacle);
-  } else {
+  } else if (random > 0.7) {
     if (!isActive) {
       const letterInstance = new Character(currentWord[currentWordIndex]); //generate characters
       charactersArray.push(letterInstance);
       isActive = true;
     }
+  } else if (random === 0.6) {
+    const powerUp = new PowerUp();
+    powerUpArray.push(powerUp);
   }
 
   // Remove items off-screen
@@ -211,6 +254,12 @@ const itemCreationInterval = setInterval(() => {
     }
   });
 }, 2000);
+
+powerUpArray.forEach((powerInstance) => {
+  if (powerInstance.positionY < 0) {
+    powerInstance.removeCharacter();
+  }
+});
 
 //collision detection function
 
@@ -237,6 +286,16 @@ const itemMovingInterval = setInterval(() => {
       document.getElementById("board").style.animation = "none";
       carInstance.obstacleElement.remove();
       clearInterval(itemCreationInterval);
+    }
+  });
+
+  //Move power ups
+  powerUpArray.forEach((powerUpInstance) => {
+    powerUpInstance.moveDown();
+    if (checkCollision(player, powerUpInstance)) {
+      player.playPowerUpSound();
+      powerUpSpeed();
+      powerUpInstance.powerUpElement.remove();
     }
   });
 
@@ -326,3 +385,17 @@ homeButtonElements.forEach((button) => {
     window.location.href = "./index.html";
   });
 });
+const musicElement = document.getElementById("play-music");
+musicElement.addEventListener("click", () => {
+  player.playRaceSound();
+});
+
+function powerUpSpeed() {
+  document.getElementById("board").style.animation =
+    "loopingRoad 100s linear infinite";
+
+  setTimeout(() => {
+    document.getElementById("board").style.animation =
+      "loopingRoad 200s linear infinite";
+  }, 5000);
+}
