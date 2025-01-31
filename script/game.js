@@ -39,6 +39,7 @@ const wordsArray = [
   "HOTWHEELS",
   "FERRARI",
   "MCLAREN",
+  // "A",
 ];
 const currentWord = wordsArray[Math.floor(Math.random() * wordsArray.length)]; //random word picking from the word array
 
@@ -211,9 +212,10 @@ homeButtonElements.forEach((button) => {
 
 // Music button functionality
 
-const musicElement = document.getElementById("play-music");
-musicElement.addEventListener("click", () => {
-  player.playRaceSound();
+document.addEventListener("keypress", (e) => {
+  if (e.code === "KeyM") {
+    player.playRaceSound();
+  }
 });
 
 // Function to speed up the road animation during power-up

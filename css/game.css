@@ -63,52 +63,6 @@ body {
   }
 }
 
-
-
-/* CSS */
-#play-music {
-  position: absolute;
-  top:7%;
-  left: 7%;
-  align-self: center;
-  background-color:white;
-  background-image: none;
-  background-position: 0 90%;
-  background-repeat: repeat no-repeat;
-  background-size: 4px 3px;
-  border-radius: 15px 225px 255px 15px 15px 255px 225px 15px;
-  border-style: solid;
-  border-width: 2px;
-  box-shadow: rgba(0, 0, 0, .2) 15px 28px 25px -18px;
-  box-sizing: border-box;
-  color: #41403e;
-  cursor: pointer;
-  display: inline-block;
-  font-family: Neucha, sans-serif;
-  font-size: 3rem;
-  line-height: 23px;
-  outline: none;
-  padding: .75rem;
-  text-decoration: none;
-  transition: all 235ms ease-in-out;
-  border-bottom-left-radius: 15px 255px;
-  border-bottom-right-radius: 225px 15px;
-  border-top-left-radius: 255px 15px;
-  border-top-right-radius: 15px 225px;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-}
-
-#play-music:hover {
-  box-shadow: rgba(0, 0, 0, .3) 2px 8px 8px -5px;
-  transform: translate3d(0, 2px, 0);
-}
-
-#play-music:focus {
-  box-shadow: rgba(0, 0, 0, .3) 2px 8px 4px -6px;
-}
-
 .instructions{
  margin-left: 5%;
  margin-top:35% ;
@@ -119,14 +73,11 @@ body {
  font-weight: 500;
 }
 
-
 .instructions p{
   font-size: 1.5rem;
   float: left;
   margin-right: 20px;
 }
-
-
 
 /* Word display container */
 #word-display-container {
