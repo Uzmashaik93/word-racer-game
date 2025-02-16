@@ -1,6 +1,6 @@
 # Word Racer 🏁
 
-Word Racer is an exciting racing and typing game where players dodge traffic while collecting letters to form words. The game combines the thrill of avoiding obstacles with the fun of racing and challenging players to collect the letters and avoid getting hit by cars on the road.
+Word Racer is an exciting racing game where players dodge traffic while collecting letters to form words. The game combines the thrill of avoiding obstacles with the fun of racing and challenging players to collect the letters and avoid getting hit by cars on the road.
 
 [Start Playing](https://uzmashaik93.github.io/word-racer-game/) 🚘
 <details>
